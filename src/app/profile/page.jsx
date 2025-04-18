@@ -1,22 +1,31 @@
 "use client"
-import React, { useEffect, useState } from "react";
-import { checkSession } from "@/app/api/route";
-import Navbar from "@/app/components/Navbar";
+// import ProfileCard from "@/app/components/ProfileCard";
 import PostUpload from "@/app/components/PostUpload";
 import ProfileFeed from "@/app/components/ProfileFeed";
+import Navbar from "@/app/components/Navbar";
+import React, {useEffect, useState} from "react";
+import {checkSession} from "@/app/api/route";
+import SignForm from "../components/SignForm";
 import ProfileForm from "../components/ProfileForm";
+import {SessionContext} from "@/app/api/checkUser/route";
 
 export default function ProfilePage() {
-    const [sessionUser, setSessionUser] = useState(null);
     const [isOpen, setIsOpen] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
-
     useEffect(() => {
         const fetchSession = async () => {
             await checkSession(setSessionUser);
         };
         fetchSession();
     }, []);
+
+    // const user = {
+    //     name: "Name",
+    //     role: 0,
+    //     // followers: 0,
+    //     // followings: 0,
+    //     // details: "Details",
+    // };
 
     const posts = [
         { name: "NAME ARTIST", time: "2 days ago", account: "Account" },
