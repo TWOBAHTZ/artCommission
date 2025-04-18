@@ -8,11 +8,11 @@ import {checkSession} from "@/app/api/route";
 import SignForm from "../components/SignForm";
 import ProfileForm from "../components/ProfileForm";
 import {SessionContext} from "@/app/api/checkUser/route";
-import ProfileCard from "../components/ProfileCard";
+import ProfileCard from "@/app/components/ProfileCard";
 
 export default function ProfilePage() {
     const [isOpen, setIsOpen] = useState(false);
-    const [isLogin, setIsLogin] = useState(false);
+    const [isClose, setIsClose] = useState(false);
     const {sessionUser} = useContext(SessionContext);
 
     const posts = [
@@ -28,9 +28,14 @@ export default function ProfilePage() {
         <div>
             <Navbar session={sessionUser} />
             <div className="max-w-3xl mx-auto p-4">
-                {/* Profile Header */}
-                <ProfileCard/>
-                
+                {/* Profile Header moved to ProfileCard */}
+                <ProfileCard
+                    user={sessionUser}
+                    onEditClick={() => {
+                        setIsClose(true);
+                        setIsOpen(true);
+                    }}
+                />
                 {/* Upload Post */}
                 <PostUpload onPost={handleNewPost} />
 
@@ -38,7 +43,7 @@ export default function ProfilePage() {
                 <ProfileFeed posts={posts} />
 
                 {/* Profile Form Modal */}
-                <ProfileForm isOpen={isOpen} setIsOpen={setIsOpen} isLogin={isLogin} />
+                <ProfileForm isOpen={isOpen} setIsOpen={setIsOpen} isClose={isClose} />
             </div>
         </div>
     );
