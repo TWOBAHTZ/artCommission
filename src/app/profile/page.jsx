@@ -1,49 +1,51 @@
-"use client"
-// import ProfileCard from "@/app/components/ProfileCard";
+"use client";
 import PostUpload from "@/app/components/PostUpload";
 import ProfileFeed from "@/app/components/ProfileFeed";
 import Navbar from "@/app/components/Navbar";
-import React, {useContext, useEffect, useState} from "react";
-import {checkSession} from "@/app/api/route";
-import SignForm from "../components/SignForm";
+import React, { useContext, useState, useEffect } from "react";
 import ProfileForm from "../components/ProfileForm";
-import {SessionContext} from "@/app/api/checkUser/route";
-import ProfileCard from "@/app/components/ProfileCard";
+import ProfileCard from "@/app/components/ProfileCard"; // นำเข้า ProfileCard
+import { SessionContext } from "@/app/api/checkUser/route";
+import { getProfile } from "../api/route"; // นำเข้า getProfile ฟังก์ชันที่คุณสร้างไว้
 
 export default function ProfilePage() {
     const [isOpen, setIsOpen] = useState(false);
-    const [isClose, setIsClose] = useState(false);
-    const {sessionUser} = useContext(SessionContext);
+    const [isLogin, setIsLogin] = useState(false);
+
+
+    const { sessionUser: localSessionUser } = useContext(SessionContext);
+    const [apiUserData, setApiUserData] = useState(null);
 
     const posts = [
         { name: "NAME ARTIST", time: "2 days ago", account: "Account" },
-        { name: "NAME ARTIST", time: "4 days ago", account: "Account" }
+        { name: "NAME ARTIST", time: "4 days ago", account: "Account" },
     ];
 
     const handleNewPost = () => {
         console.log("Post clicked");
     };
 
+    useEffect(() => {
+        console.log("***********************")
+        const fetchProfile = async () => {
+            const result = await getProfile();
+            if (!result.error) {
+                setApiUserData(result.user);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    console.log("Local Session User:", localSessionUser);
+    console.log("API User Data:", apiUserData);
     return (
         <div>
-            <Navbar session={sessionUser} />
+            <Navbar session={localSessionUser} />
             <div className="max-w-3xl mx-auto p-4">
-                {/* Profile Header moved to ProfileCard */}
-                <ProfileCard
-                    user={sessionUser}
-                    onEditClick={() => {
-                        setIsClose(true);
-                        setIsOpen(true);
-                    }}
-                />
-                {/* Upload Post */}
+                <ProfileCard userData={apiUserData || localSessionUser} />
                 <PostUpload onPost={handleNewPost} />
-
-                {/* Post Feed */}
                 <ProfileFeed posts={posts} />
-
-                {/* Profile Form Modal */}
-                <ProfileForm isOpen={isOpen} setIsOpen={setIsOpen} isClose={isClose} />
+                <ProfileForm isOpen={isOpen} setIsOpen={setIsOpen} isLogin={isLogin} />
             </div>
         </div>
     );

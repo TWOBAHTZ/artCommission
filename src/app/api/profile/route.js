@@ -22,40 +22,26 @@ const fetchProfile = async () => {
   };
   
 
-  export default function ProfileComponent() {
-    const [profile, setProfile] = useState(null);
+  export async function fetchUserProfile() {
+    try {
+      const response = await fetch('/user/profile', {
+        method: 'GET',
+        credentials: 'include',
+      });
   
-    const loadProfile = async () => {
-      try {
-        const response = await fetch('/profile', {
-          method: 'GET',
-          credentials: 'include',
-        });
+      const result = await response.json();
   
-        const result = await response.json();
-  
-        if (!response.ok) {
-          throw new Error(result.error || 'Failed to fetch profile');
-        }
-  
-        setProfile(result.user);
-      } catch (err) {
-        console.error('Error loading profile:', err.message);
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to fetch profile');
       }
-    };
   
-    // โหลดทันทีเมื่อ component mount
-    useEffect(() => {
-      loadProfile();
-    }, []);
-  
-    return (
-      <div>
-        <button onClick={loadProfile}>Reload Profile</button>
-        {profile ? <p>{profile.name}</p> : <p>Loading...</p>}
-      </div>
-    );
-  }
+      return result.user;
+    } catch (err) {
+      console.error('Error fetching profile:', err.message);
+      return null;
+    }
+}
+
   
   
   

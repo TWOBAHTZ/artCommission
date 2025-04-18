@@ -96,3 +96,35 @@ export const registerNewUser = async (name, email, password, confPassword, role)
 
     return await registerUser({ name, email, password, role });
 };
+
+export const getProfile = async () => {
+    try {
+        const response = await fetch('http://localhost:8080/user/profile', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        const contentType = response.headers.get("content-type");
+        console.log("Content-Type:", contentType);
+
+        if (!contentType || !contentType.includes("application/json")) {
+            const errorText = await response.text();
+            console.error("❌JSON:", errorText);
+            return { error: "Server response is not JSON." };
+        }
+
+        const data = await response.json();
+        console.log("Response Data:", data);
+
+        if (!response.ok) {
+            return { error: data.error || "Unauthorized Access" };
+        }
+        return data;
+    } catch (err) {
+        console.error("⚠️ Error during fetching profile:", err);
+        return { error: "Unable to connect to the server." };
+    }
+};
